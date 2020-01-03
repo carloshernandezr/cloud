@@ -1,14 +1,15 @@
 
+$(document).ready(function () {
+    makeLiHistory();
+});
+
 var currentDay = moment().format('L')
+
 $("#searchBtn").on("click", function (event) {
-
-
-  
-
-  fiveDayForecast();
-
+    fiveDayForecast();
     clear();
     today();
+    historyShow();
 });
 
 $("#location").on("keypress", function (e) {
@@ -35,30 +36,18 @@ function today(){
         method: "GET"
     }).then(function (response) {
 
-        console.log(queryURL);
-
-        console.log(response);
-
-
-        var weatherList = $("<ul class='box content'>");
- 
+  
+        var weatherList = $("<ul class='box content'>"); 
         var city = $("<li>" + "<h1 class= 'title'>" + response.name + " " + "(" + currentDay + ") "+  response.weather[0].main  +"</h1>" +  " " + "</li");
-
         //imagen
- 
-
         var imgc = $("<li>" + "<span>" + " "+ "</span>" +         
         //imagen aqui
          "<img id=\"theImg\" src=\"http://openweathermap.org/img/wn/"+response.weather[0].icon+"@2x.png\">" + "</span>" +"</li>");
-
-         var description = $("<li>" + "<span>" + "  " + response.weather[0].description  + "</span>" + "</li>");
-
-
+        var description = $("<li>" + "<span>" + "  " + response.weather[0].description  + "</span>" + "</li>");
         var temp = $("<li>" + "<span>" + "Temperature: " + response.main.temp + " &#8457" + "</span>" + "</li>");
         var humid = $("<li>" + "<span>" + "Humidity: " + response.main.humidity + " %" + "</span>" + "</li>");
         var wind = $("<li>" + "<span>" + "Wind Speed: " + response.wind.speed + " mph" + "</span>" + "</li>");
        
-
         $("#currentWeather").append(weatherList);
         weatherList.append(city, imgc, description, temp, humid, wind);
 
@@ -87,119 +76,99 @@ function today(){
 
 function fiveDayForecast(){
 
+    var APIKey2 = "212ce54622309764f1223ca412134b53";
+    var searchParam2 = $("#location")
+        .val()
+        .trim();
+    // Here we are building the URL we need to query the database
+    var queryURL2 =
+    "https://api.openweathermap.org/data/2.5/forecast?q=" + searchParam2 +"&units=imperial&appid=" + APIKey2;
 
-  var APIKey2 = "212ce54622309764f1223ca412134b53";
-  var searchParam2 = $("#location")
-      .val()
-      .trim();
-  // Here we are building the URL we need to query the database
-   var queryURL2 =
-       "https://api.openweathermap.org/data/2.5/forecast?q=" +
-       searchParam2 +"&units=imperial&appid=" + APIKey2;
-
- 
- 
-
-   
-     
-      
-  $.ajax({
-      url: queryURL2,
-      method: "GET"
-  }).then(function (response2) {
-    console.log(queryURL2);
-    console.log(response2);
-
-    var dataday=" ";
-
-
-
-
-function makeBox(index2) {    
- 
-    var weatherList = $("<ul class='content is-info'>");
-    var city = $("<li>" + "<h1 class= 'title'>" +" " +response2.list[index2].dt_txt + " " +"</h1>" +  " " + "</li");
-   var imgc = $("<li>" + "<span>" + " "+ "</span>" + "<img id=\"theImg\" src=\"http://openweathermap.org/img/wn/"+response2.list[index2].weather[0].icon+"@2x.png\">" + "</span>" +"</li>");
-    var description = $("<li>" + "<span>" + "  " + response2.list[index2].weather[0].description  + "</span>" + "</li>");
-   var temp = $("<li>" + "<span>" + "Temperature: " + response2.list[index2].main.temp + " &#8457" + "</span>" + "</li>");
-   var humid = $("<li>" + "<span>" + "Humidity: " + response2.list[index2].main.humidity + " %" + "</span>" + "</li>");  
-
-   $("#day"+index2).append(weatherList);
-   weatherList.append(city, imgc, description, temp, humid);
-
-}//function
-var item=0;
-
-for (let index = 0; index < 40; index++) {
-
-    var data=response2.list[index].dt_txt;
-   
- 
-   
-     
     
-    if (dataday=="") {
+    $.ajax({
+        url: queryURL2,
+        method: "GET"
+    }).then(function (response2) { 
 
-        makeBox(index);
-        console.log("dd")
-        alert("1")
+        var dataday=" ";
+        var item=0;
+
+        for (let index = 0; index < 40; index++) {
+
+            var data=response2.list[index].dt_txt;
+
+            if ( (dataday!="")  &&  (data.substr(0,10)!=dataday)) {
+
+                dataday=data.substr(0,10);
+                var weatherList = $("<ul class='content is-info'>");
+                var city = $("<li>" + "<h1 class= 'title'>" +" " +response2.list[index].dt_txt + " " +"</h1>" +  " " + "</li");
+                var imgc = $("<li>" + "<span>" + " "+ "</span>" + "<img id=\"theImg\" src=\"http://openweathermap.org/img/wn/"+response2.list[index].weather[0].icon+"@2x.png\">" + "</span>" +"</li>");
+                var description = $("<li>" + "<span>" + "  " + response2.list[index].weather[0].description  + "</span>" + "</li>");
+                var temp = $("<li>" + "<span>" + "Temperature: " + response2.list[index].main.temp + " &#8457" + "</span>" + "</li>");
+                var humid = $("<li>" + "<span>" + "Humidity: " + response2.list[index].main.humidity + " %" + "</span>" + "</li>");  
         
-    }else if ( (dataday!="")  &&  (data.substr(0,10)!=dataday)) {
-//         makeBox(index);
-//  console.log(data.substr(0,10))
+                $("#day"+item).append(weatherList);
+                weatherList.append(city, imgc, description, temp, humid);
+                
+                item++;
+        
+            }
 
-        dataday=data.substr(0,10);
+        }//for
 
-      var weatherList = $("<ul class='content is-info'>");
-      var city = $("<li>" + "<h1 class= 'title'>" +" " +response2.list[index].dt_txt + " " +"</h1>" +  " " + "</li");
-     var imgc = $("<li>" + "<span>" + " "+ "</span>" + "<img id=\"theImg\" src=\"http://openweathermap.org/img/wn/"+response2.list[index].weather[0].icon+"@2x.png\">" + "</span>" +"</li>");
-      var description = $("<li>" + "<span>" + "  " + response2.list[index].weather[0].description  + "</span>" + "</li>");
-     var temp = $("<li>" + "<span>" + "Temperature: " + response2.list[index].main.temp + " &#8457" + "</span>" + "</li>");
-     var humid = $("<li>" + "<span>" + "Humidity: " + response2.list[index].main.humidity + " %" + "</span>" + "</li>");  
-  
-     $("#day"+item).append(weatherList);
-     weatherList.append(city, imgc, description, temp, humid);
-     alert(index)
-     item++;
-     
-
-    
-    }
-
-
-   alert("fuera")
-
-
-
-
-}//for
-
-  });
+    });
 };
 
 
+var historyArr = [];
 
 
 
+//history
+function historyShow() {
+
+    var cityclick = $("#location").val();
+
+    if (localStorage.getItem("historyArrl") === null) {
+
+        historyArr=[cityclick];
+        localStorage.setItem("historyArrl",JSON.stringify(historyArr));
 
 
+    } else  {
+        var valueLS = JSON.parse(localStorage.getItem("historyArrl"));
+         historyArr=valueLS;  
+
+        if (historyArr.length==5) {
+            historyArr.shift();
+        }
+        historyArr.push(cityclick);
+        localStorage.setItem("historyArrl",JSON.stringify(historyArr));
+
+    }
 
 
-
-
-
-
-
-
-
-  // api.openweathermap.org/data/2.5/weather?q=London
-
-
-
-
-
-
+ //create li
  
+ makeLiHistory();
+
+  
+}//history
+
+
+function makeLiHistory(params) {
+
+    var valueLS = JSON.parse(localStorage.getItem("historyArrl"));
+    historyArr=valueLS;
+    $("#historyItem").empty();
+
+    for (var i = 0; i < historyArr.length; i++){ 
+        var li= $("<li>" + "<span>" + historyArr[i] +"</span>" + "</li>");  
+        $("#historyItem").prepend(li);  
+    }    
+}
+
+
 // Function to empty out the currentWeather div
 function clear() {
     $("#currentWeather").empty();
@@ -207,7 +176,7 @@ function clear() {
     $("#day2").empty();
     $("#day3").empty();
     $("#day4").empty();
-    $("#day5").empty();
+    $("#day0").empty();
 }
 
 
