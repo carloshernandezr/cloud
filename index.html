@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.0/css/bulma.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
         <link rel="stylesheet" href="style.css">
-        <link rel="shortcut icon" href="">      <!-- //error favicon -->
+        <link rel="shortcut icon" href="#">      <!-- //error favicon -->
     </head>
     <body>
         <section class="hero">
@@ -20,7 +20,7 @@
                 Weather Dashboard
               </h1>
             </div>
-          </div>
+          </div> 
         </section>
 
         <div class="container is-fluid">
@@ -31,12 +31,12 @@
 
                         <div class="field" id="citySearch">
                             <label class="label">Search for a City:</label>
-                            <input type="text" value="salt lake" name="location" id="location" placeholder="City"/>
+                            <input type="text" value="" name="location" id="location" placeholder="City"/>
                             <button class="button is-small" id="searchBtn"><i class="fas fa-search"></i></button>
                         </div>
 
                         <!-- history -->
-                        <div class="field" id="historyItem">
+                        <div class="container is-overlay" id="historyItem">
  
 
 
@@ -50,7 +50,7 @@
 
                 <div class="tile is-parent">
                     <div class="tile is-child" id="currentWeather">
-                        <div id="currentDay"> vvv</div>
+                        <div id="currentDay"> </div>
                     </div>
                 </div>
 
@@ -62,35 +62,35 @@
             <div class="tile is-ancestor">
 
                 <div class="tile is-parent">
-                    <div class="tile is-child notification is-info i" id="day0" >
+                    <div class="tile is-child notification is-info i" style="display: none;" id="day0" >
                       <!-- <p class="title">Middle tile</p>
                       <p class="subtitle">With an image</p> -->
                     </div>
                 </div>
 
                 <div class="tile is-parent">
-                  <div class="tile is-child notification is-info i" id="day1" >
+                  <div class="tile is-child notification is-info i" style="display: none;" id="day1" >
                     <!-- <p class="title">Middle tile</p>
                     <p class="subtitle">With an image</p> -->
                   </div>
               </div>
 
               <div class="tile is-parent">
-                <div class="tile is-child notification is-info i" id="day2" >
+                <div class="tile is-child notification is-info i" style="display: none;" id="day2" >
                   <!-- <p class="title">Middle tile</p>
                   <p class="subtitle">With an image</p> -->
                 </div>
             </div>
 
             <div class="tile is-parent">
-              <div class="tile is-child notification is-info i" id="day3" >
+              <div class="tile is-child notification is-info i" style="display: none;" id="day3" >
                 <!-- <p class="title">Middle tile</p>
                 <p class="subtitle">With an image</p> -->
               </div>
           </div>
 
           <div class="tile is-parent">
-            <div class="tile is-child notification is-info i" id="day4" >
+            <div class="tile is-child notification is-info i" style="display: none;" id="day4" >
               <!-- <p class="title">Middle tile</p>
               <p class="subtitle">With an image</p> -->
             </div>
@@ -101,10 +101,6 @@
 
              </div><!--//ascnetor -->
             
-
-
-
-
 
         </div>
 

@@ -1,6 +1,68 @@
+//geofunction
 
-$(document).ready(function () {
-    makeLiHistory();
+
+
+
+function geoFindMe() {// function for get latitude longitude current location
+ 
+   
+  
+    function success(position) {
+
+        var latitude  = position.coords.latitude;
+    
+        var  longitude = position.coords.longitude;
+
+        var APIKey = "212ce54622309764f1223ca412134b53";  
+    
+        var queryURL =     
+            "http://api.openweathermap.org/data/2.5/find?lat="+ latitude +"&lon="+ longitude +"&cnt=1&appid="+ APIKey;
+        
+                
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (georesponse) {
+                console.log(georesponse)
+        
+            var geocity =georesponse.list[0].name;
+        
+                $("#location").val( geocity )
+                fiveDayForecast();
+                clear();
+                today();
+                historyShow();
+        
+                
+            })
+
+    }
+  
+    function error() {
+      status.textContent = 'Unable to retrieve your location';
+    }
+  
+    if (!navigator.geolocation) {
+      status.textContent = 'Geolocation is not supported by your browser';
+    } else {
+      status.textContent = 'Locating…';
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+  
+  }
+  
+
+
+
+  //geofunction
+
+
+
+
+$(document).ready(function () {//for get name of current city
+
+   geoFindMe();
+   makeLiHistory();
 });
 
 var currentDay = moment().format('L')
@@ -16,7 +78,10 @@ $("#location").on("keypress", function (e) {
     if (e.which === 13) {
         clear();
         today(); 
-        fiveDayForecast();
+        fiveDayForecast();   
+        historyShow();
+
+
     };
 });
 
@@ -26,15 +91,19 @@ function today(){
     var searchParam = $("#location")
         .val()
         .trim();
-    // Here we are building the URL we need to query the database
+   //Here we are building the URL we need to query the database
     var queryURL =
         "https://api.openweathermap.org/data/2.5/weather?q=" +
         searchParam + "&units=imperial&appid=" + APIKey;
 
+     
+     
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function (response) {
+
+        console.log(response)
 
   
         var weatherList = $("<ul class='box content'>"); 
@@ -93,15 +162,18 @@ function fiveDayForecast(){
         var dataday=" ";
         var item=0;
 
+
         for (let index = 0; index < 40; index++) {
 
             var data=response2.list[index].dt_txt;
+
+
 
             if ( (dataday!="")  &&  (data.substr(0,10)!=dataday)) {
 
                 dataday=data.substr(0,10);
                 var weatherList = $("<ul class='content is-info'>");
-                var city = $("<li>" + "<h1 class= 'title'>" +" " +response2.list[index].dt_txt + " " +"</h1>" +  " " + "</li");
+                var city = $("<li>" + "<h1 class= 'title'>" +" " +response2.list[index].dt_txt.substr(0,10) + " " +"</h1>" +  " " + "</li");
                 var imgc = $("<li>" + "<span>" + " "+ "</span>" + "<img id=\"theImg\" src=\"http://openweathermap.org/img/wn/"+response2.list[index].weather[0].icon+"@2x.png\">" + "</span>" +"</li>");
                 var description = $("<li>" + "<span>" + "  " + response2.list[index].weather[0].description  + "</span>" + "</li>");
                 var temp = $("<li>" + "<span>" + "Temperature: " + response2.list[index].main.temp + " &#8457" + "</span>" + "</li>");
@@ -109,6 +181,7 @@ function fiveDayForecast(){
         
                 $("#day"+item).append(weatherList);
                 weatherList.append(city, imgc, description, temp, humid);
+                $("#day"+item).css("display","block")
                 
                 item++;
         
@@ -120,13 +193,14 @@ function fiveDayForecast(){
 };
 
 
-var historyArr = [];
+var historyArr = [" "];
 
 
 
 //history
 function historyShow() {
 
+    
     var cityclick = $("#location").val();
 
     if (localStorage.getItem("historyArrl") === null) {
@@ -138,10 +212,14 @@ function historyShow() {
     } else  {
         var valueLS = JSON.parse(localStorage.getItem("historyArrl"));
          historyArr=valueLS;  
+         if (valueLS!=null){
 
-        if (historyArr.length==5) {
-            historyArr.shift();
+            if (historyArr.length==5) {
+                historyArr.shift(); 
+                        
+            }
         }
+
         historyArr.push(cityclick);
         localStorage.setItem("historyArrl",JSON.stringify(historyArr));
 
@@ -152,6 +230,17 @@ function historyShow() {
  
  makeLiHistory();
 
+ $("#historyItem .button").on("click", function (event) {
+   
+    $("#location").val( $(this).text() )
+    fiveDayForecast();
+    clear();
+    today();
+    historyShow();   
+     
+    
+    });
+
   
 }//history
 
@@ -159,12 +248,16 @@ function historyShow() {
 function makeLiHistory(params) {
 
     var valueLS = JSON.parse(localStorage.getItem("historyArrl"));
-    historyArr=valueLS;
-    $("#historyItem").empty();
 
-    for (var i = 0; i < historyArr.length; i++){ 
-        var li= $("<li>" + "<span>" + historyArr[i] +"</span>" + "</li>");  
-        $("#historyItem").prepend(li);  
+    if (valueLS!=null) {
+        historyArr=valueLS;
+        $("#historyItem").empty();
+       
+        for (var i = 0; i < historyArr.length; i++){ 
+            var li= $("<li>" + "<span>" + historyArr[i] +"</span>" + "</li>").addClass("button is-fullwidth is-overlay is-white");  //revisas para poner ancho
+            $("#historyItem").prepend(li);  
+        }   
+
     }    
 }
 
@@ -179,6 +272,15 @@ function clear() {
     $("#day0").empty();
 }
 
+$(document).ready(function () {    
 
+    $("#historyItem .button").on("click", function (event) {
+    
+        $("#location").val( $(this).text() )
+        fiveDayForecast();
+        clear();
+        today();
+        historyShow();
+    });
 
- 
+});
